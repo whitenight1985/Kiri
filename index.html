@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>白夜</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">白夜</div>
+        <nav>
+            <ul>
+                <li><a href="#">主页</a></li>
+                <li><a href="#">个人简介</a></li>
+                <li><a href="#">联系我</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero-image swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="images/image1.jpg" alt="轮播图片1"></div>
+                <div class="swiper-slide"><img src="images/image2.jpg" alt="轮播图片2"></div>
+                <div class="swiper-slide"><img src="images/image3.jpg" alt="轮播图片3"></div>
+                <div class="swiper-slide"><img src="images/image4.jpg" alt="轮播图片4"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+        <div class="intro">
+            <p>欢迎来到我的个人空间。这里是我分享生活、思考和创作的地方。</p>
+        </div>
+        <div class="photo-carousel">
+            <!-- 这里可以放置个人照片轮播 -->
+        </div>
+        <div class="file-upload">
+            <h2>文件上传</h2>
+            <form id="uploadForm">
+                <input type="file" name="file" id="file">
+                <button type="submit">上传文件</button>
+            </form>
+            <button id="viewFiles">查看已上传文件</button>
+        </div>
+    </main>
+
+    <div id="fileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>已上传文件列表</h2>
+            <ul id="fileList"></ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-weibo"></i> 微博</a>
+            <a href="#" class="social-link"><i class="fab fa-weixin"></i> 微信</a>
+            <a href="#" class="social-link"><i class="fab fa-zhihu"></i> 知乎</a>
+            <a href="#" class="social-link"><i class="fas fa-book"></i> 豆瓣</a>
+        </div>
+        <div class="contact-info">
+            <i class="fas fa-envelope"></i> whitemoon1985@outlook.com
+        </div>
+        <div class="copyright">
+            © 2023 白夜. 保留所有权利.
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        new Swiper('.hero-image', {
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+        // 文件上传
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(result => {
+                alert(result);
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('上传失败: ' + error.message);
+            });
+        });
+
+        // 查看文件列表
+        document.getElementById('viewFiles').addEventListener('click', function() {
+            fetch('http://localhost:3000/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileList = document.getElementById('fileList');
+                    fileList.innerHTML = '';
+                    files.forEach(file => {
+                        const li = document.createElement('li');
+                        li.textContent = `${file.filename} (上传时间: ${new Date(file.uploadDate).toLocaleString()})`;
+                        fileList.appendChild(li);
+                    });
+                    document.getElementById('fileModal').style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // 关闭模态框
+        document.querySelector('.close').addEventListener('click', function() {
+            document.getElementById('fileModal').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
