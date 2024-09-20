@@ -1,0 +1,24 @@
+<section id="file-management">
+    <h2>文件管理</h2>
+    <div id="file-upload">
+        <h3>文件上传</h3>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">上传文件</button>
+        </form>
+        <!-- 添加上传状态和结果显示 -->
+        <div id="upload-status"></div>  
+    </div>
+    <div id="file-query">
+        <h3>文件查询</h3>
+        <button id="query-files">查询所有文件</button>
+        <ul id="file-list"></ul>
+    </div>
+    <div id="file-content-display">
+        <h3>文件内容</h3>
+        <div id="file-content"></div>
+    </div>
+</section>
+
+<!-- 在 body 标签结束前添加 -->
+<script src="file-operations.js"></script>
